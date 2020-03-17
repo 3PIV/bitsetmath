@@ -1,3 +1,5 @@
+#ifndef _BITSET_MATH_H
+#define _BITSET_MATH_H
 /**
  * @file bitsetmath.hpp
  * @author Paul Preston Provins IV (pprovins@vols.utk.edu)
@@ -260,7 +262,7 @@ inline void bitsetDivide(std::bitset<N> dividend, std::bitset<N> divisor,
 
 /**
  * @brief perform modulous arithmetic on two bitsets
- * 
+ *
  * @tparam N length of bitset
  * @param dividend number being modulod, also stores modulo
  * @param modulo the number to modulo
@@ -273,6 +275,7 @@ inline void bitsetModulo(std::bitset<N> &dividend, std::bitset<N> modulo) {
   dividend = remainder;
 }
 
+/*
 void assertTest() {
   // ensure 64 bit
   assert(sizeof(unsigned long long) == 8);
@@ -332,4 +335,5 @@ void assertTest() {
   std::bitset<512> test5y(3);
   bitsetModulo<512>(test5x, test5y);
   assert(test5x.to_ullong() == 2);
-}
+}*/
+#endif
