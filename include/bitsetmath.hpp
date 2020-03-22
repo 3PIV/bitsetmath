@@ -179,7 +179,7 @@ inline void bitsetSubtract(std::bitset<N> &minuend,
  */
 template <unsigned int N>
 inline void bitsetMultiply(std::bitset<N> &term,
-                           const std::bitset<N> &multiplier) {
+                           const std::bitset<N> multiplier) {
   std::bitset<N> tmp = term;
   term.reset();
   // we want to minimize the number of times we shift and add
@@ -270,70 +270,54 @@ inline void bitsetDivide(std::bitset<N> dividend, std::bitset<N> divisor,
 template <unsigned int N>
 inline void bitsetModulo(std::bitset<N> &dividend, std::bitset<N> modulo) {
   std::bitset<N> quotient;
-  std::bitset<N> remainder;
-  bitsetDivide<N>(dividend, modulo, quotient, remainder);
-  dividend = remainder;
+  bitsetDivide<N>(dividend, modulo, quotient, dividend);
 }
 
-/*
-void assertTest() {
-  // ensure 64 bit
-  assert(sizeof(unsigned long long) == 8);
+/**
+ * @brief raise a bitset to a power using l-to-r bin exponentation
+ *
+ * @tparam N length of bitset
+ * @param base bitset to raise
+ * @param exponent number to raise to
+ */
+template <unsigned int N>
+inline void bitsetPow(std::bitset<N> &base, unsigned long long int exponent) {
+  std::bitset<N> rotate(1);
+  std::bitset<N> copy(base);
+  while (exponent > 1) {
+    if (exponent % 2 == 1) {
+      bitsetMultiply<N>(rotate, copy);
+    }
+    exponent /= 2;
+    bitsetMultiply<N>(copy, base);
+    base = copy;
+  }
+  bitsetMultiply<N>(base, rotate);
+}
 
-  // test sub
-  std::bitset<512> test0x(4);
-  std::bitset<512> test0y(3);
-  bitsetSubtract<512>(test0x, test0y);
-  assert(test0x.to_ullong() == 1);
+/**
+ * @brief sets first param to (base ^ exponent) % modul0
+ *
+ * @tparam N length of bitset
+ * @param base number to raise and modulo
+ * @param exponent number representing exponent
+ * @param modulo the number to modulo by
+ */
+template <unsigned int N>
+inline void bitsetPowMod(std::bitset<N> &base, unsigned long long int exponent,
+                         const std::bitset<N> &modulo) {
+  std::bitset<N> rotate(1);
+  bitsetModulo<N>(base, modulo);
 
-  // test add
-  std::bitset<512> test1x(2);
-  std::bitset<512> test1y(3);
-  bitsetAdd<512>(test1x, test1y);
-  assert(test1x.to_ullong() == 5);
-
-  // test mul
-  std::bitset<512> test2x(2);
-  std::bitset<512> test2y(3);
-  bitsetMultiply<512>(test2x, test2y);
-  assert(test2x.to_ullong() == 6);
-
-  // test compares
-  std::bitset<512> test3x(2);
-  std::bitset<512> test3y(3);
-  assert(bitsetLt<512>(test3x, test3y));
-  assert(bitsetLtEq<512>(test3x, test3y));
-  assert(bitsetGt<512>(test3y, test3x));
-  assert(bitsetGtEq<512>(test3y, test3x));
-
-  std::bitset<512> test3w(3);
-  std::bitset<512> test3z(3);
-  assert(!bitsetLt<512>(test3w, test3z));
-  assert(bitsetLtEq<512>(test3w, test3z));
-  assert(!bitsetGt<512>(test3z, test3w));
-  assert(bitsetGtEq<512>(test3z, test3w));
-
-  // test divide
-  std::bitset<512> test4d(4);
-  std::bitset<512> test4z(2);
-  std::bitset<512> test4q(0);
-  std::bitset<512> test4r(0);
-  bitsetDivide<512>(test4d, test4z, test4q, test4r);
-  assert(test4q.to_ullong() == 2);
-  assert(test4r.to_ullong() == 0);
-
-  test4d = std::bitset<512>(5);
-  test4z = std::bitset<512>(3);
-  test4q = std::bitset<512>(0);
-  test4r = std::bitset<512>(0);
-  bitsetDivide<512>(test4d, test4z, test4q, test4r);
-  assert(test4q.to_ullong() == 1);
-  assert(test4r.to_ullong() == 2);
-
-  // test modulo
-  std::bitset<512> test5x(5);
-  std::bitset<512> test5y(3);
-  bitsetModulo<512>(test5x, test5y);
-  assert(test5x.to_ullong() == 2);
-}*/
+  while (exponent > 0) {
+    if (exponent % 2 == 1) {
+      bitsetMultiply<N>(rotate, base);
+      bitsetModulo<N>(rotate, modulo);
+    }
+    bitsetMultiply<N>(base, base);
+    bitsetModulo<N>(base, modulo);
+    exponent /= 2;
+  }
+  base = rotate;
+}
 #endif
