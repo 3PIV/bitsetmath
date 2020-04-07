@@ -1,13 +1,16 @@
 # bitsetmath
 
-Bitsetmath - a simple extension of std::bitset to handle arithmetic operations.
-Bitsetmath is a simple solution for integer math operations for the std::bitset data structure.
+Bitsetmath is a simple, header-only solution for integer math operations to extend the std::bitset data structure.
 
 ### Prerequisites
 
 ```
-CMake >= 3.12
 C++11 Compliant Compiler
+```
+
+To build the rsa test executable:
+```
+CMake >= 3.12
 ```
 
 ### Installing
@@ -15,6 +18,19 @@ C++11 Compliant Compiler
 In the directory you wish to build:
 ```
 cmake /path/to/bitsetmath && make
+```
+
+### Testing
+
+To test how the library works a toy rsa program was implemented as well as a small assert test package.
+After building the rsa program, it may be ran as follows:
+```
+echo 'encrypt fileOfIntegers.txt done' | rsa
+```
+Which will produce `encrypted.txt`.
+To decrypt:
+```
+echo 'decrypt encrypted.txt done' | rsa
 ```
 
 ## Authors
